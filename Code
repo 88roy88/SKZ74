@@ -80,6 +80,7 @@ public class MyBot implements PirateBot
 					else
 						if (pirate == collector) // collector
 						{
+							if(col2 && minDist(game, pirate, 7)!=null && minDist(game, pirate, 7).getReloadTurns()<1 &&minDist(game, pirate, 7).getTurnsToSober()<1) game.defend(pirate);
 							Location destination = null;
 							Treasure treasure = checkTreasure(game, pirate);
 
@@ -112,10 +113,6 @@ public class MyBot implements PirateBot
 							Location destination = jihadDestinations.get(0);                          
 							if (distress != null)
 							{
-								//    Pirate sac = checkPirate(game, pirate);
-
-								//    destination = sac != null && game.distance(pirate, sac) < game.distance(pirate, distress)
-								//    ? sac.getLocation() : distress.getInitialLocation();
 								destination = distress.getInitialLocation();
 								distress = null;
 							}
@@ -144,7 +141,7 @@ public class MyBot implements PirateBot
 							if (!pirate.getLocation().equals(destination))
 								if (collector.getTurnsToSober() <= 0 && !collector.hasTreasure()) 
 								{
-									int moves = minDist(game, pirate) ? 2 : 1;
+									int moves = minDis(game, pirate) ? 2 : 1;
 									Location step = game.getSailOptions(pirate, destination, moves).get(0);
 									if (game.getPirateOn(step) != null && game.getPirateOn(step).getOwner() == 0) moves = 3 - moves;
 									game.setSail(pirate, game.getSailOptions(pirate, destination, moves).get(0));
@@ -159,6 +156,7 @@ public class MyBot implements PirateBot
 									c = collector.getTurnsToSober() <= 0 ? 5 : 6;
 								}
 						}
+					game.debug("id= "+pirate.getId()+" reFire="+pirate.getReloadTurns()+" sober:"+pirate.getTurnsToSober());
 				}
 
 			if (!destinations.isEmpty())
@@ -239,12 +237,19 @@ public class MyBot implements PirateBot
 			}
 		return target;
 	}
-
-	private boolean minDist(PirateGame game, Pirate pirate)
+	
+	private boolean minDis(PirateGame game, Pirate pirate)
 	{
 		for (Pirate i : game.enemyPirates())
 			if (game.distance(pirate, i) < 2) return true;
 		return false;
+	}
+	
+	private Pirate minDist(PirateGame game, Pirate pirate,int D)
+	{
+		for (Pirate i : game.enemyPirates())
+			if (game.distance(pirate, i) < D) return i;
+		return null;
 	}
 
 	private Pirate checkCol(PirateGame game, Pirate pirate)
@@ -275,7 +280,7 @@ public class MyBot implements PirateBot
 		for (Integer i : removals.values())
 			if ((game.getEnemyPirate(i).getTurnsToSober() <= 0 && game.getEnemyPirate(i).getReloadTurns() <= 0
 			&& game.inRange(game.getEnemyPirate(i).getLocation(), step))
-			|| game.getEnemyPirate(i).getLocation().equals(game.allMyPirates().get(0).getInitialLocation())) return true;
+					|| game.getEnemyPirate(i).getLocation().equals(game.allMyPirates().get(0).getInitialLocation())) return true;
 		return false;
 	}
 
@@ -342,7 +347,7 @@ public class MyBot implements PirateBot
 						}
 						if(b)  
 							possible.add(trying);						
-						
+
 					}
 				} 
 			}
