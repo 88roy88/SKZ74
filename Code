@@ -13,13 +13,10 @@ public class MyBot implements PirateBot
 	HashMap<Pirate, Integer> blockings = new HashMap<Pirate, Integer>(), removals = new HashMap<Pirate, Integer>();
 	Pirate collector2 = null, collector3 = null;
 	public int inMe=0,T;
-	public int[] shots = new int[4];
 	public boolean COL2=false,col2=false, checkingJihad = true;
 	public List<Pirate>enemyToKill=null;
 	public void doTurn(PirateGame game)
 	{
-		for(int i=0;i<4;i++)	shots[i] = 0;
-		
 		if(checkingJihad) { 
 			enemyToKill = checkJihad(game);
 			checkingJihad = false;
@@ -78,13 +75,11 @@ public class MyBot implements PirateBot
 				if (pirate.getTurnsToSober() <= 0)
 				{
 					Pirate target = check(game, pirate);
-					if (!pirate.hasTreasure() && pirate.getReloadTurns() == 0 && target != null){
-						shots[target.getId()]=1;
-						game.attack(pirate, target);
-					}
+					if (!pirate.hasTreasure() && pirate.getReloadTurns() == 0 && target != null) game.attack(pirate, target);
 
 					else
 						if (pirate == collector) // collector
+						gam
 						{
 							if(col2 && minDist(game, pirate, 7)!=null && minDist(game, pirate, 7).getReloadTurns()<1 &&minDist(game, pirate, 7).getTurnsToSober()<1) game.defend(pirate);
 							Location destination = null;
@@ -202,13 +197,12 @@ public class MyBot implements PirateBot
 				c-= moves;
 			}
 		}
-		game.debug("shots: "+shots[0]+shots[1]+shots[2]+shots[3]);
 	}
 
 	private Pirate check(PirateGame game, Pirate pirate)
 	{
 		for (Pirate enemy : game.enemySoberPirates())
-			if (game.inRange(pirate, enemy) && shots[enemy.getId()]==0) return enemy;
+			if (!enemy.getLocation().equals(enemy.getInitialLocation()) && game.inRange(pirate, enemy)) return enemy;
 		return null;
 	}
 
