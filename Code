@@ -156,7 +156,7 @@ public class MyBot implements PirateBot
 									c = collector.getTurnsToSober() <= 0 ? 5 : 6;
 								}
 						}
-					game.debug("id= "+pirate.getId()+" reFire="+pirate.getReloadTurns()+" speed:"+speed+" sober:"+pirate.getTurnsToSober());
+					game.debug("id= "+pirate.getId()+" reFire="+pirate.getReloadTurns()+" sober:"+pirate.getTurnsToSober());
 				}
 
 			if (!destinations.isEmpty())
