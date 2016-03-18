@@ -88,7 +88,6 @@ public class MyBot implements PirateBot
 						{
 							if(col2 && minDist(game, pirate, 7)!=null && minDist(game, pirate, 7).getReloadTurns()<1 &&minDist(game, pirate, 7).getTurnsToSober()<1) {
 								game.debug("defend!"+game.get_defense_expiration_turns+"  "+get_defense_reload_turns);
-);
 								game.defend(pirate);
 							}
 							Location destination = null;
