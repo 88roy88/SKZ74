@@ -87,11 +87,13 @@ public class MyBot implements PirateBot
 						if (pirate == collector) // collector
 						{
 							game.debug("Ex"+pirate.getDefenseExpirationTurns()+" ReDef"+pirate.getDefenseReloadTurns());
-							if(!def && col2 && minDist(game, pirate, 9)!=null && minDist(game, pirate, 9).getReloadTurns()<3 && minDist(game, pirate, 9).getTurnsToSober()<3 && pirate.getDefenseReloadTurns()==0 && pirate.getDefenseExpirationTurns()==0) {
+							if(col2 && minDist(game, pirate, 9)!=null && minDist(game, pirate, 9).getReloadTurns()<3 && minDist(game, pirate, 9).getTurnsToSober()<3 && !minDist(game, pirate, 9).hasTreasure() && pirate.getDefenseReloadTurns()==0 && pirate.getDefenseExpirationTurns()==0) {
 								game.debug("defend!");
-								game.defend(pirate);;
+								
 								def=true;
 							}
+							if (def) game.defend(pirate);
+							game.debug("def= "+def);
 							Location destination = null;
 							Treasure treasure = checkTreasure(game, pirate);
 
@@ -108,7 +110,7 @@ public class MyBot implements PirateBot
 							else
 							{
 								Location step = game.getSailOptions(pirate, destination, 1).get(0);
-								if (!threatened(game, step)) game.setSail(pirate, game.getSailOptions(pirate, destination, 1).get(0));
+								if (!threatened(game, step)) if (!(pirate==collector && def)) game.setSail(pirate, game.getSailOptions(pirate, destination, 1).get(0));
 							}
 						}
 
@@ -203,8 +205,7 @@ public class MyBot implements PirateBot
 				}
 				game.debug("" + moves);
 				steps.put(pirate, step);
-				if (!(pirate==collector && def)) game.setSail(pirate, step);
-				else game.debug("def!");
+				 game.setSail(pirate, step);
 				c-= moves;
 			}
 		}
