@@ -19,7 +19,7 @@ public class MyBot implements PirateBot
 	public void doTurn(PirateGame game)
 	{
 		for(int i=0;i<4;i++)	shots[i] = 0;
-		
+		boolean def=false;
 		if(checkingJihad) { 
 			enemyToKill = checkJihad(game);
 			checkingJihad = false;
@@ -80,15 +80,17 @@ public class MyBot implements PirateBot
 					Pirate target = check(game, pirate);
 					if (!pirate.hasTreasure() && pirate.getReloadTurns() == 0 && target != null){
 						shots[target.getId()]=1;
-						game.attack(pirate, target);
+						if(!(pirate==collector && def)) game.attack(pirate, target);
 					}
 
 					else
 						if (pirate == collector) // collector
 						{
-							if(col2 && minDist(game, pirate, 7)!=null && minDist(game, pirate, 7).getReloadTurns()<1 &&minDist(game, pirate, 7).getTurnsToSober()<1) {
-								game.debug("defend!"+game.getDefenseExpirationTurns()+"  "+game.getDefenseReloadTurns());
-								game.defend(pirate);
+							game.debug("Ex"+pirate.getDefenseExpirationTurns()+" ReDef"+pirate.getDefenseReloadTurns());
+							if(!def && col2 && minDist(game, pirate, 9)!=null && minDist(game, pirate, 9).getReloadTurns()<3 && minDist(game, pirate, 9).getTurnsToSober()<3 && pirate.getDefenseReloadTurns()==0 && pirate.getDefenseExpirationTurns()==0) {
+								game.debug("defend!");
+								game.defend(pirate);;
+								def=true;
 							}
 							Location destination = null;
 							Treasure treasure = checkTreasure(game, pirate);
@@ -201,7 +203,8 @@ public class MyBot implements PirateBot
 				}
 				game.debug("" + moves);
 				steps.put(pirate, step);
-				game.setSail(pirate, step);
+				if (!(pirate==collector && def)) game.setSail(pirate, step);
+				else game.debug("def!");
 				c-= moves;
 			}
 		}
@@ -400,6 +403,24 @@ public class MyBot implements PirateBot
 			toReturn.add(enemy.get(i));
 			if(game.distance(enemy.get(i), enemy.get(i+1))<2)
 				i++;			
+		}
+		List<Integer> rangeCount = new LinkedList<Integer>();
+		for(int i=0; i<toReturn.size(); i++) {
+			rangeCount.add(new Integer(0));
+			for(int c=0; c<enemy.size(); c++)
+				if(game.inRange(toReturn.get(i), enemy.get(c).getInitialLocation()))
+					rangeCount.set(i, rangeCount.get(i)+1);
+		}
+		for(int i=0; i<toReturn.size()-1; i++) {
+			if(rangeCount.get(i)<rangeCount.get(i+1)) {
+				Pirate tempPir = toReturn.get(i);
+				int tempCount = rangeCount.get(i);
+				toReturn.set(i, toReturn.get(i+1));
+				rangeCount.set(i, rangeCount.get(i+1));
+				toReturn.set(i+1, tempPir);
+				rangeCount.set(i+1, tempCount);
+				i = -1;
+			}
 		}
 		return toReturn;
 	}
