@@ -44,7 +44,7 @@ public class MyBot implements PirateBot
 			{
 				game.debug("DH!");
 				collector2 = game.allMyPirates().get(1);
-				collector3 = game.allMyPirates().get(2);
+			//	collector3 = game.allMyPirates().get(2);
 			}
 
 			HashMap<Pirate, Location> destinations = new HashMap<Pirate, Location>(), steps = new HashMap<Pirate, Location>();
